@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "symcore"
+version = "0.1.0"
+description = "A core symbolic mathematics library for Python."
+readme = "README.md"
+authors = [
+    { name = "Dmytro Kulyk", email = "dimakulyk2005@gmail.com" }
+]
+license = { file = "LICENSE.txt" }
+keywords = ["symbolic", "mathematics", "parser", "differentiation"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Mathematics"
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.3.5",
+    "hypothesis>=6.148.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/dk872/symcore"
+
+[tool.setuptools.package-dir]
+symcore = "src"
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers --cov=symcore.src --cov-report=term-missing"
+testpaths = [
+    "symcore/tests",
+]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+skip_glob = ["__init__.py"]
