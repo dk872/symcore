@@ -31,7 +31,7 @@ def get_tokens(text: str) -> List[Token]:
     ("1.000", 1.0, "Trailing zeros after decimal"),
 
     # Scientific Notation
-    ("1e-5", 1.0, "Lexer should parse this as '1' then 'e', then '-5' if it fails to see E-notation"),
+    ("1e-5", 1e-5, "Scientific notation small number"),
 ])
 def test_numbers_are_correctly_tokenized(input_str, expected_value, description):
     """
