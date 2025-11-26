@@ -44,7 +44,7 @@ if deriv_y:
     print(f"Simplified d/dy: {simplified_deriv_y.to_string()}")
 
     # Example: simplify a more complex expression (requires it to be parsed first)
-    complex_expr = parse("a + 0*b + 1*c")
+    complex_expr = parse("a + 1*c - 0*b")
     simplified_complex_expr = complex_expr.simplify()
     print(f"Complex expression: {complex_expr.to_string()}")
     print(f"Simplified result: {simplified_complex_expr.to_string()}")  # Expected: a + c
