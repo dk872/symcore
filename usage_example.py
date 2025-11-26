@@ -1,5 +1,5 @@
 # This script demonstrates parsing, evaluation, differentiation, substitution,
-# and programmatic expression building
+# and simplification expressions
 from symcore import parse
 
 print("--- Symcore Library API Demonstration ---")
