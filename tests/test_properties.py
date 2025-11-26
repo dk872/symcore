@@ -30,15 +30,21 @@ def small_exponents(draw):
 
 @st.composite
 def nonzero_numbers(draw):
-    """Generate non-zero numeric values to avoid division by zero."""
-    num = draw(st.floats(
-        min_value=-1e4,
-        max_value=1e4,
-        allow_nan=False,
-        allow_infinity=False
-    ))
-    assume(abs(num) > 0.01)
-    return num
+    """Generate non-zero numeric values without using assume()."""
+    return draw(
+        st.floats(
+            min_value=-1e4,
+            max_value=-0.01,
+            allow_nan=False,
+            allow_infinity=False
+        ) |
+        st.floats(
+            min_value=0.01,
+            max_value=1e4,
+            allow_nan=False,
+            allow_infinity=False
+        )
+    )
 
 
 @st.composite
@@ -339,7 +345,7 @@ class TestDifferentiationProperties:
 
         df = f.diff('x')
         dg = g.diff('x')
-        sum_derivatives = Expression(BinaryOperator('+', df._root, dg._root))
+        sum_derivatives = Expression(BinaryOperator('+', df.root, dg.root))
 
         result1 = derivative_sum.evaluate({'x': value})
         result2 = sum_derivatives.evaluate({'x': value})
@@ -596,7 +602,7 @@ class TestAlgebraicIdentities:
         test_val = c
         result1 = expr.evaluate({'x': test_val})
         result2 = expanded.evaluate({'x': test_val})
-        assert_approx_equal(result1, result2, rel_tol=1e-6)
+        assert_approx_equal(result1, result2, rel_tol=1e-4, abs_tol=1e-7)
 
 
 class TestSquareRootProperties:

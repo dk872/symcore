@@ -1,6 +1,6 @@
 from __future__ import annotations
-from .Node import Node
 from typing import Dict, Union
+from .Node import Node
 
 # Type alias for clarity in method signatures
 Number = Union[int, float]

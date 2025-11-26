@@ -1,5 +1,5 @@
-import pytest
 import math
+import pytest
 from src.engine.Parser import Parser
 
 

@@ -1,6 +1,6 @@
 import argparse
-from .engine.Expression import parse
 from typing import Dict, Union, Any
+from .engine.Expression import parse
 
 
 def _parse_eval_assignments(assignments: list[str]) -> Dict[str, Union[int, float]]:
@@ -20,8 +20,10 @@ def _parse_eval_assignments(assignments: list[str]) -> Dict[str, Union[int, floa
                 value = int(value)
             eval_values[key.strip()] = value
 
-        except ValueError:
-            raise ValueError(f"Invalid numeric value for '{key}': {value_str}")
+        except ValueError as exc:
+            raise ValueError(
+                f"Invalid numeric value for '{key}': {value_str}"
+            ) from exc
 
     return eval_values
 
@@ -33,7 +35,7 @@ def _handle_differentiation(expr: Any, variable_name: str) -> Any:
         print(f"Derivative w.r.t {variable_name}: {derived_expr.to_string()}")
         return derived_expr
     except Exception as e:
-        raise RuntimeError(f"Failed to differentiate: {e}")
+        raise RuntimeError(f"Failed to differentiate: {e}") from e
 
 
 def _handle_simplification(expr: Any) -> Any:
@@ -43,7 +45,7 @@ def _handle_simplification(expr: Any) -> Any:
         print(f"Simplified: {simplified_expr.to_string()}")
         return simplified_expr
     except Exception as e:
-        raise RuntimeError(f"Failed to simplify expression: {e}")
+        raise RuntimeError(f"Failed to simplify expression: {e}") from e
 
 
 def _handle_substitution(expr: Any, substitution_args: list[str]) -> Any:

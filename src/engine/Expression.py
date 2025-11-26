@@ -90,7 +90,7 @@ class Expression:
         if isinstance(value, Node):
             return value
         if isinstance(value, Expression):
-            return value._root
+            return value.root
         if isinstance(value, (int, float)):
             return Literal(value)
         if isinstance(value, str):

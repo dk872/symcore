@@ -1,5 +1,5 @@
-import pytest
 import math
+import pytest
 from src.engine.Expression import parse, Expression
 from src.nodes.Literal import Literal
 from src.nodes.Variable import Variable
@@ -154,7 +154,7 @@ class TestNodeInteractions:
         # Create binary operation
         expr = Expression(BinaryOperator('+', lit, var))
 
-        assert expr.to_string() == "5 + x" or "x + 5"
+        assert expr.to_string() in ("5 + x", "x + 5")
 
         result = expr.evaluate({'x': 10})
         assert result == 15
@@ -324,10 +324,10 @@ class TestEdgeCasesAndBoundaries:
             ("1^x", {'x': 100}, 1),
         ]
 
-        for expr_str, vars, expected in test_cases:
+        for expr_str, variables, expected in test_cases:
             expr = parse(expr_str)
             simplified = expr.simplify()
-            result = simplified.evaluate(vars)
+            result = simplified.evaluate(variables)
             assert result == expected
 
 

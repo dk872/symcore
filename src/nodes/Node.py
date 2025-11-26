@@ -1,10 +1,14 @@
 from __future__ import annotations
-from typing import Dict
+from typing import Dict, Optional
 import copy
 
 
 class Node:
     """Base abstract class for all Abstract Syntax Tree (AST) nodes."""
+    op: Optional[str] = None
+    left: Optional[Node] = None
+    right: Optional[Node] = None
+    operand: Optional[Node] = None
 
     def copy(self) -> "Node":
         """Returns a deep copy of the current node and its entire subtree."""

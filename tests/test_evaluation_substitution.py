@@ -1,6 +1,6 @@
-import pytest
 import math
 from typing import Dict, Union
+import pytest
 from src.engine.Expression import parse
 
 PI_VALUE = math.pi
@@ -371,7 +371,7 @@ def test_substitute_polynomial_identity():
 
 def test_substitute_trig_identity():
     """Test sin(x)^2 + cos(x)^2 = 1 where x = pi/4."""
-    result = evaluate_expr(f"sin(x)^2 + cos(x)^2", {'x': PI_VALUE / 4})
+    result = evaluate_expr("sin(x)^2 + cos(x)^2", {'x': PI_VALUE / 4})
     expected = 1.0
     assert pytest.approx(result) == expected, f"Expected: {expected}, got: {result}"
 
@@ -386,41 +386,36 @@ def test_substitute_exp_identity():
 def test_symbolic_substitute_variable():
     """Test x^2 + 1 where x = y."""
     result = substitute_expr("x^2 + 1", {'x': 'y'})
-    expected1 = "1 + y ^ 2"
-    expected2 = "y ^ 2 + 1"
-    assert result == expected1 or result == expected2, f"Expected: {expected1} or {expected2}, got: {result}"
+    expected_options = {"1 + y ^ 2", "y ^ 2 + 1"}
+    assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 
 
 def test_symbolic_substitute_expression():
     """Test x^2 + 1 where x = y + 1."""
     result = substitute_expr("x^2 + 1", {'x': 'y + 1'})
-    expected1 = "1 + (y + 1) ^ 2"
-    expected2 = "(y + 1) ^ 2 + 1"
-    assert result == expected1 or result == expected2, f"Expected: {expected1} or {expected2}, got: {result}"
+    expected_options = {"1 + (y + 1) ^ 2", "(y + 1) ^ 2 + 1"}
+    assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 
 
 def test_symbolic_substitute_multiple_vars():
     """Test a * b + c where a = x/2, c = z."""
     result = substitute_expr("a * b + c", {'a': 'x/2', 'c': 'z'})
-    expected1 = "x / 2 * b + z"
-    expected2 = "z + x / 2 * b"
-    assert result == expected1 or result == expected2, f"Expected: {expected1} or {expected2}, got: {result}"
+    expected_options = {"x / 2 * b + z", "z + x / 2 * b"}
+    assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 
 
 def test_symbolic_substitute_no_simplification():
     """Test that substitution doesn't simplify algebraically."""
     result = substitute_expr("(a + b) * (a - b)", {'a': 'x * 2', 'b': '5'})
-    expected1 = "(x * 2 + 5) * (x * 2 - 5)"
-    expected2 = "(5 + x * 2) * (x * 2 - 5)"
-    assert result == expected1 or result == expected2, f"Expected: {expected1} or {expected2}, got: {result}"
+    expected_options = {"(x * 2 + 5) * (x * 2 - 5)", "(5 + x * 2) * (x * 2 - 5)"}
+    assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 
 
 def test_symbolic_substitute_in_function():
     """Test sin(x) where x = 2*y."""
     result = substitute_expr("sin(x)", {'x': '2 * y'})
-    expected1 = "sin(2y)"
-    expected2 = "sin(2 * y)"
-    assert result == expected1 or result == expected2, f"Expected: {expected1} or {expected2}, got: {result}"
+    expected_options = {"sin(2y)", "sin(2 * y)"}
+    assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 
 
 def test_symbolic_substitute_nested():

@@ -1,7 +1,7 @@
-import pytest
 import subprocess
 import sys
 import math
+import pytest
 from src.engine.Expression import parse, Expression
 from src.nodes.Literal import Literal
 from src.nodes.Variable import Variable
@@ -556,7 +556,7 @@ class TestAPIOutputFormats:
         """Test to_string() output for simple expressions."""
         expr = parse("2 + 3")
         output = expr.to_string()
-        assert output == "2 + 3" or output == "3 + 2"
+        assert output in ("2 + 3", "3 + 2")
 
     def test_api_to_string_preserves_precedence(self):
         """Test that to_string() preserves operator precedence."""

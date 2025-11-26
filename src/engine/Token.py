@@ -4,7 +4,8 @@ from typing import Optional, Any
 
 # Regular expression to tokenize the input string.
 # It handles three groups: numbers, identifiers, and operators.
-TOKEN_REGEX = re.compile(r"\s*(?:(\d+(?:\.\d*)?(?:[eE][+-]?\d+)?|\.\d+(?:[eE][+-]?\d+)?)|([a-zA-Z_]\w*)|(\*\*|[+\-*/^()]))")
+TOKEN_REGEX = re.compile(r"\s*(?:(\d+(?:\.\d*)?(?:[eE][+-]?\d+)?|\.\d+(?:[eE][+-]?\d+)?)|"
+                         r"([a-zA-Z_]\w*)|(\*\*|[+\-*/^()]))")
 
 
 class Token:

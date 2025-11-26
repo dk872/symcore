@@ -182,8 +182,7 @@ class BinaryOperator(Node):
                 if b == 0:
                     if a == 0:
                         raise ValueError("Undefined result (0/0)")
-                    else:
-                        raise ZeroDivisionError("Division by zero")
+                    raise ZeroDivisionError("Division by zero")
                 return a / b
         raise ValueError(f"Unknown binary operator {self.op}")
 
@@ -196,7 +195,7 @@ class BinaryOperator(Node):
         if isinstance(left, Literal) and isinstance(right, Literal):
             try:
                 return Literal(self.eval_binary(left.value, right.value))
-            except Exception:
+            except (ZeroDivisionError, ValueError):
                 # If evaluation fails (e.g. division by zero), keep the structure
                 pass
 

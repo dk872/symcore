@@ -1,6 +1,6 @@
 from __future__ import annotations
-from .Node import Node
 from typing import Dict
+from .Node import Node
 
 
 class Variable(Node):

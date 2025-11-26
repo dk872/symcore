@@ -185,8 +185,7 @@ class UnaryOperator(Node):
             new_exp = factor.right.value / 2
             if new_exp == 1:
                 return factor.left.copy()
-            else:
-                return BinaryOperator("^", factor.left.copy(), self._to_literal(new_exp))
+            return BinaryOperator("^", factor.left.copy(), self._to_literal(new_exp))
 
         return None
 

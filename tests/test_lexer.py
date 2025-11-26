@@ -1,7 +1,7 @@
+from typing import List
 import pytest
 from src.engine.Lexer import Lexer
 from src.engine.Token import Token
-from typing import List
 
 
 def get_tokens(text: str) -> List[Token]:
@@ -13,7 +13,7 @@ def get_tokens(text: str) -> List[Token]:
     return [tok for tok in lexer.tokens if tok.kind != Token.EOF]
 
 
-@pytest.mark.parametrize("input_str, expected_value, description", [
+@pytest.mark.parametrize("input_str, expected_value, _description", [
     # Basic Integers and Zero
     ("123", 123.0, "Standard integer"),
     ("0", 0.0, "Zero"),
@@ -33,7 +33,7 @@ def get_tokens(text: str) -> List[Token]:
     # Scientific Notation
     ("1e-5", 1e-5, "Scientific notation small number"),
 ])
-def test_numbers_are_correctly_tokenized(input_str, expected_value, description):
+def test_numbers_are_correctly_tokenized(input_str, expected_value, _description):
     """
     Verifies that various integer and floating-point formats are correctly
     parsed into a single NUMBER token.
@@ -104,7 +104,7 @@ def test_whitespace_and_tabs_are_ignored():
     assert [tok.value for tok in tokens] == [1.0, "+", "sin", "(", "x", ")"]
 
 
-@pytest.mark.parametrize("input_str, expected_values, description", [
+@pytest.mark.parametrize("input_str, expected_values, _description", [
     # Unary sequences
     ("-x + -10", ["-", "x", "+", "-", 10.0], "Unary minus on variable and number"),
     ("x+-y", ["x", "+", "-", "y"], "Binary addition followed by unary minus"),
@@ -119,7 +119,7 @@ def test_whitespace_and_tabs_are_ignored():
         2.5, "*", "sin", "(", "x", "**", 3.0, "-", 10.0, ")", "+", "pi", "/", "y_var"
     ], "Full mixed equation integration test"),
 ])
-def test_complex_sequences_and_integration(input_str, expected_values, description):
+def test_complex_sequences_and_integration(input_str, expected_values, _description):
     """
     Tests complex sequences, ensuring correct separation and type identification
     for all tokens in the expression.

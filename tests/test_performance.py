@@ -1,9 +1,10 @@
 import time
 import sys
-import pytest
 import statistics
 from typing import Callable
+import pytest
 from src.engine.Expression import parse
+
 
 sys.setrecursionlimit(5000)
 
@@ -58,7 +59,7 @@ class TestPerformance:
             expr_str = generate_linear_expression(n)
 
             # Measure parsing time
-            avg_time = benchmark(lambda: parse(expr_str))
+            avg_time = benchmark(lambda expr=expr_str: parse(expr))
 
             items_per_sec = n / avg_time if avg_time > 0 else 0
             print(f"{n:<10} | {avg_time:<15.6f} | {items_per_sec:<15.0f}")
@@ -77,7 +78,7 @@ class TestPerformance:
             expr = parse(generate_linear_expression(n))
 
             # Measure simplify() time
-            avg_time = benchmark(lambda: expr.simplify())
+            avg_time = benchmark(expr.simplify)
 
             print(f"{n:<10} | {avg_time:<15.6f}")
 
@@ -98,7 +99,7 @@ class TestPerformance:
             expr = parse(generate_nested_expression(n))
 
             # Measure diff() time
-            avg_time = benchmark(lambda: expr.diff('x'))
+            avg_time = benchmark(lambda e=expr: e.diff('x'))
 
             print(f"{n:<10} | {avg_time:<15.6f}")
 
@@ -137,7 +138,7 @@ class TestPerformance:
 
             # Measure substitute() time
             # We use simplify=False to measure pure substitution cost without simplification overhead
-            avg_time = benchmark(lambda: expr.substitute({'x': sub_target}, simplify=False))
+            avg_time = benchmark(lambda e=expr: e.substitute({'x': sub_target}, simplify=False))
 
             print(f"{n:<10} | {avg_time:<15.6f}")
 
