@@ -78,7 +78,7 @@ def _handle_evaluation(expr: Any, eval_args: list[str]):
 
 def main():
     """Main function to parse command-line arguments and execute symbolic operations."""
-    parser = argparse.ArgumentParser(description="Symbolic Expression Evaluator CLI")
+    parser = argparse.ArgumentParser(description="Symbolic Expression Evaluator `Symcore`")
 
     # 1. Positional Argument
     parser.add_argument("expression", type=str, help="The mathematical expression string.")
