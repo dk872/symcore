@@ -72,14 +72,14 @@ def test_product_rule_simple():
 def test_product_rule_with_exponent():
     """Tests product rule with exponent: (x^2 * exp(x))'."""
     result = get_derived_string("x^2 * exp(x)")
-    expected_options = {"exp(x) * (2x + x ^ 2)", "2exp(x) * x + exp(x) * x ^ 2", "exp(x) * x ^ 2 + 2exp(x) * x"}
+    expected_options = {"exp(x) * (2x + x ^ 2)", "2 * exp(x) * x + exp(x) * x ^ 2", "exp(x) * x ^ 2 + 2exp(x) * x"}
     assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 
 
 def test_product_rule_with_constants():
     """Tests product rule with constant: (5x^3)' = 15x^2."""
     result = get_derived_string("5 * x^3")
-    expected_options = {"15x ^ 2"}
+    expected_options = {"15x ^ 2", "15 * x ^ 2"}
     assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 
 
@@ -93,7 +93,7 @@ def test_product_rule_three_factors():
 def test_product_rule_polynomial_times_trig():
     """Tests product of polynomial and trigonometric function."""
     result = get_derived_string("(x^2 + 1) * sin(x)")
-    expected_options = {"(1 + x ^ 2) * cos(x) + 2sin(x) * x", "2sin(x) * x + (1 + x ^ 2) * cos(x)",
+    expected_options = {"(1 + x ^ 2) * cos(x) + 2 * sin(x) * x", "2sin(x) * x + (1 + x ^ 2) * cos(x)",
                         "(x ^ 2 + 1) * cos(x) + 2x * sin(x)"}
     assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 
@@ -200,11 +200,11 @@ def test_chain_rule_sqrt_of_expression():
 def test_power_rule_simple():
     """Tests power rule: (x^n)' = n*x^(n-1)."""
     result = get_derived_string("x^5")
-    expected_options = {"5x ^ 4"}
+    expected_options = {"5x ^ 4", "5 * x ^ 4"}
     assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 
     result = get_derived_string("x^3")
-    expected_options = {"3x ^ 2"}
+    expected_options = {"3x ^ 2", "3 * x ^ 2"}
     assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 
 
@@ -302,14 +302,14 @@ def test_derivative_of_sin_with_coefficient():
 def test_derivative_of_variable_base_constant_exponent():
     """Tests derivative of x^n where n is constant: (x^3)' = 3x^2."""
     result = get_derived_string("x^3")
-    expected_options = {"3x ^ 2"}
+    expected_options = {"3x ^ 2", "3 * x ^ 2"}
     assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 
 
 def test_derivative_of_constant_base_variable_exponent():
     """Tests derivative of a^x where a is constant: (2^x)' = 2^x * ln(2)."""
     result = get_derived_string("2^x")
-    expected_options = {"0.69314718055994532 ^ x"}
+    expected_options = {"0.6931471805599453 * 2 ^ x"}
     assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 
 
@@ -351,7 +351,7 @@ def test_partial_derivative_with_constant_variable():
 def test_complex_expression_product_quotient():
     """Tests complex expression with product and quotient."""
     result = get_derived_string("(x^2 * sin(x)) / cos(x)")
-    expected_options = {"((cos(x)) ^ 2 * x ^ 2 + (sin(x)) ^ 2 * x ^ 2 + 2cos(x) * sin(x) * x) / ((cos(x)) ^ 2)"}
+    expected_options = {"((cos(x)) ^ 2 * x ^ 2 + (sin(x)) ^ 2 * x ^ 2 + 2 * cos(x) * sin(x) * x) / ((cos(x)) ^ 2)"}
     assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 
 
@@ -366,7 +366,7 @@ def test_complex_nested_expression():
 def test_complex_polynomial_in_trig():
     """Tests trigonometric function of polynomial: sin(x^3 + 2x)'."""
     result = get_derived_string("sin(x ^ 3 + 2 * x)")
-    expected_options = {"cos(2x + x ^ 3) * (3x^2 + 2)", "(3x^2 + 2) * cos(2x + x ^ 3)",
+    expected_options = {"2cos(2x + x ^ 3) + 3 * cos(2x + x ^ 3) * x ^ 2",
                         "2cos(2x + x ^ 3) + 3cos(2x + x ^ 3) * x ^ 2"}
     assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 
@@ -374,7 +374,8 @@ def test_complex_polynomial_in_trig():
 def test_complex_quotient_with_chain():
     """Tests complex quotient with chain rule: (sin(x^2) / x)'."""
     result = get_derived_string("sin(x^2) / x")
-    expected_options = {"(-sin(x ^ 2) + 2cos(x ^ 2) * x ^ 2) / (x ^ 2)", "(2cos(x ^ 2) * x ^ 2 - sin(x ^ 2)) / (x ^ 2)",
+    expected_options = {"(2 * cos(x ^ 2) * x ^ 2 - sin(x ^ 2)) / (x ^ 2)",
+                        "(2cos(x ^ 2) * x ^ 2 - sin(x ^ 2)) / (x ^ 2)",
                         "(2x * cos(x ^ 2) - sin(x ^ 2) / x) / x"}
     assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 

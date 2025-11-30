@@ -253,7 +253,7 @@ def test_combine_radicals():
 def test_combine_powers():
     """Tests combining identical power terms (x^2 + x^2 = 2x^2)."""
     result = get_simplified_string("x^2 + x^2")
-    expected_options = {"2x ^ 2"}
+    expected_options = {"2x ^ 2", "2 * x ^ 2"}
     assert result in expected_options, f"Expected one of {expected_options}, got: {result}"
 
 

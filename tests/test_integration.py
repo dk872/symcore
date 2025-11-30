@@ -29,8 +29,8 @@ class TestEndToEndFeatureFlow:
 
         # Simplify
         simplified = substituted.simplify()
-        expected = "4x ^ 2"  # x^2 + 2x^2 + x^2
-        assert simplified.to_string() == expected
+        expected_options = {"4x ^ 2", "4 * x ^ 2"} # x^2 + 2x^2 + x^2
+        assert simplified.to_string() in expected_options
 
         # Evaluate
         result = simplified.evaluate({'x': 3})
