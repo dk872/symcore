@@ -68,10 +68,11 @@ class BinaryOperator(Node):
 
         # Handle implicit multiplication: 2 * x -> 2x
         if isinstance(self.left, Literal) and not isinstance(self.right, Literal):
-            ls = self.left.to_string()
-            rs = self.right.to_string()
-            s = f"{ls}{rs}"
-            return f"({s})" if my_prec < parent_prec else s
+            if not isinstance(self.right, BinaryOperator):
+                ls = self.left.to_string()
+                rs = self.right.to_string()
+                s = f"{ls}{rs}"
+                return f"({s})" if my_prec < parent_prec else s
 
         left_s = self.left.to_string(my_prec, 'left')
         right_s = self.right.to_string(my_prec, 'right')
