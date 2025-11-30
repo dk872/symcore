@@ -107,7 +107,7 @@ python -m src.cli "x * y + 10" --eval x=5 y=2
 ```bash
 python -m src.cli "(x^2 + 1)^3" --diff x --simplify
 # Output: 
-# Derivative w.r.t x: 23x^4 + 6x^2 + 3 * x
+# Derivative w.r.t x: 2 * (3x^4 + 6x^2 + 3) * x
 # Simplified: (6x^4 + 12x^2 + 6) * x
 ```
 
