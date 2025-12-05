@@ -29,6 +29,9 @@ class UnaryOperator(Node):
 
     def to_string(self, parent_prec: int = 0, position: str = "") -> str:
         """Converts the AST node back to a string expression."""
+        if parent_prec == 0 and position == "" and self._string_cache is not None:
+            return self._string_cache
+
         if self.op in ("+", "-"):
             # Format: -x
             inner = self.operand.to_string(self.precedence(), 'right')
@@ -40,8 +43,14 @@ class UnaryOperator(Node):
 
         # Add parentheses if precedence requires it
         if self.precedence() < parent_prec:
-            return f"({s})"
-        return s
+            result = f"({s})"
+        else:
+            result = s
+
+        if parent_prec == 0 and position == "":
+            self._string_cache = result
+
+        return result
 
     def precedence(self) -> int:
         """Returns the precedence level of this operator."""
@@ -135,12 +144,12 @@ class UnaryOperator(Node):
         if isinstance(operand, BinaryOperator) and operand.op == "^":
             # Case: sqrt(x^2) -> x
             if isinstance(operand.right, Literal) and operand.right.value == 2:
-                return operand.left.copy()
+                return operand.left
 
             # Case: sqrt(x^n) where n is even -> x^(n/2)
             if isinstance(operand.right, Literal) and operand.right.value % 2 == 0:
                 new_exp = operand.right.value / 2
-                return BinaryOperator("^", operand.left.copy(), self._to_literal(new_exp)).simplify()
+                return BinaryOperator("^", operand.left, self._to_literal(new_exp)).simplify()
         return None
 
     def _simplify_sqrt_product(self, operand: Node) -> Optional[Node]:
@@ -184,8 +193,8 @@ class UnaryOperator(Node):
                 isinstance(factor.right, Literal) and factor.right.value % 2 == 0):
             new_exp = factor.right.value / 2
             if new_exp == 1:
-                return factor.left.copy()
-            return BinaryOperator("^", factor.left.copy(), self._to_literal(new_exp))
+                return factor.left
+            return BinaryOperator("^", factor.left, self._to_literal(new_exp))
 
         return None
 
@@ -254,7 +263,7 @@ class UnaryOperator(Node):
         """Handles simplification for trig functions with negative arguments."""
         # Rules: sin(-x) -> -sin(x), cos(-x) -> cos(x)
         if isinstance(operand, UnaryOperator) and operand.op == '-':
-            inner = operand.operand.copy()
+            inner = operand.operand
             if self.op == 'sin':
                 return UnaryOperator("-", UnaryOperator("sin", inner)).simplify()
             if self.op == 'cos':

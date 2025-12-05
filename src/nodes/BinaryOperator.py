@@ -35,24 +35,31 @@ class BinaryOperator(Node):
 
     def to_string(self, parent_prec: int = 0, position: str = "") -> str:
         """Converts the AST node back to a mathematical string."""
+        if parent_prec == 0 and position == "" and self._string_cache is not None:
+            return self._string_cache
+
         my_prec = self.precedence()
 
         if self.op == "*":
-            return self._mul_to_string(my_prec, parent_prec)
+            result = self._mul_to_string(my_prec, parent_prec)
+        elif self.op == "+":
+            result = self._add_to_string(my_prec, parent_prec)
+        else:
+            # Generic handling for -, /, ^
+            left_s = self.left.to_string(my_prec, 'left')
+            right_s = self.right.to_string(my_prec, 'right')
 
-        if self.op == "+":
-            return self._add_to_string(my_prec, parent_prec)
+            # Parenthesize denominator if it's a binary operator (e.g., a / (b + c))
+            if self.op == "/" and isinstance(self.right, BinaryOperator):
+                right_s = f"({self.right.to_string()})"
 
-        # Generic handling for -, /, ^
-        left_s = self.left.to_string(my_prec, 'left')
-        right_s = self.right.to_string(my_prec, 'right')
+            s = f"{left_s} {self.op} {right_s}"
+            result = s if my_prec >= parent_prec else f"({s})"
 
-        # Parenthesize denominator if it's a binary operator (e.g., a / (b + c))
-        if self.op == "/" and isinstance(self.right, BinaryOperator):
-            right_s = f"({self.right.to_string()})"
+        if parent_prec == 0 and position == "":
+            self._string_cache = result
 
-        s = f"{left_s} {self.op} {right_s}"
-        return s if my_prec >= parent_prec else f"({s})"
+        return result
 
     def _mul_to_string(self, my_prec: int, parent_prec: int) -> str:
         """Helper to format multiplication strings."""
@@ -272,8 +279,8 @@ class BinaryOperator(Node):
 
         # Distributive Property: x * (a +/- b) -> xa +/- xb
         if isinstance(right, BinaryOperator) and right.op in ("+", "-"):
-            term1 = BinaryOperator("*", left.copy(), right.left.copy()).simplify()
-            term2 = BinaryOperator("*", left.copy(), right.right.copy()).simplify()
+            term1 = BinaryOperator("*", left, right.left).simplify()
+            term2 = BinaryOperator("*", left, right.right).simplify()
             return BinaryOperator(right.op, term1, term2).simplify()
 
         # Exponent Rules: x^a * x^b -> x^(a+b)
@@ -322,7 +329,8 @@ class BinaryOperator(Node):
             else:
                 all_terms.append(BinaryOperator("*", Literal(-1), t))
 
-        return self._combine_add_terms(all_terms)
+        combined_sum = self._combine_add_terms(all_terms)
+        return combined_sum.simplify()
 
     def _simplify_div(self, left: Node, right: Node) -> Node:
         """Handles simplification for Division (/)."""
@@ -370,9 +378,10 @@ class BinaryOperator(Node):
         # Square expansion: (A +/- B)^2 -> A^2 +/- 2AB + B^2
         if self._is_literal(right, 2) and isinstance(left, BinaryOperator) and left.op in ("+", "-"):
             a, b = left.left, left.right
-            a_sq = BinaryOperator("^", a.copy(), Literal(2)).simplify()
-            b_sq = BinaryOperator("^", b.copy(), Literal(2)).simplify()
-            two_ab = BinaryOperator("*", Literal(2), BinaryOperator("*", a.copy(), b.copy())).simplify()
+
+            a_sq = BinaryOperator("^", a, Literal(2)).simplify()
+            b_sq = BinaryOperator("^", b, Literal(2)).simplify()
+            two_ab = BinaryOperator("*", Literal(2), BinaryOperator("*", a, b)).simplify()
 
             if left.op == "+":
                 result = BinaryOperator("+", BinaryOperator("+", a_sq, two_ab), b_sq)

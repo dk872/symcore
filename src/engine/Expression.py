@@ -75,7 +75,7 @@ class Expression:
     def diff(self, variable: str) -> "Expression":
         """Compute the derivative with respect to the given variable."""
         derived = _diff_node(self._root, variable)
-        return Expression(derived.simplify())
+        return Expression(derived).simplify()
 
     def _build_substitution_map(self, values: Dict[str, Union[Number, Node, str]]) -> Dict[str, Node]:
         """Convert substitution values to Node objects."""
@@ -100,56 +100,56 @@ class Expression:
     def __add__(self, other: Any) -> "Expression":
         """Addition operator overload."""
         right = _ensure_node(other)
-        return Expression(BinaryOperator("+", self._root.copy(), right).simplify())
+        return Expression(BinaryOperator("+", self._root, right))
 
     def __radd__(self, other: Any) -> "Expression":
         """Right addition operator overload."""
         left = _ensure_node(other)
-        return Expression(BinaryOperator("+", left, self._root.copy()).simplify())
+        return Expression(BinaryOperator("+", left, self._root))
 
     def __sub__(self, other: Any) -> "Expression":
         """Subtraction operator overload."""
         right = _ensure_node(other)
-        return Expression(BinaryOperator("-", self._root.copy(), right).simplify())
+        return Expression(BinaryOperator("-", self._root, right))
 
     def __rsub__(self, other: Any) -> "Expression":
         """Right subtraction operator overload."""
         left = _ensure_node(other)
-        return Expression(BinaryOperator("-", left, self._root.copy()).simplify())
+        return Expression(BinaryOperator("-", left, self._root))
 
     def __mul__(self, other: Any) -> "Expression":
         """Multiplication operator overload."""
         right = _ensure_node(other)
-        return Expression(BinaryOperator("*", self._root.copy(), right).simplify())
+        return Expression(BinaryOperator("*", self._root, right))
 
     def __rmul__(self, other: Any) -> "Expression":
         """Right multiplication operator overload."""
         left = _ensure_node(other)
-        return Expression(BinaryOperator("*", left, self._root.copy()).simplify())
+        return Expression(BinaryOperator("*", left, self._root))
 
     def __truediv__(self, other: Any) -> "Expression":
         """Division operator overload."""
         right = _ensure_node(other)
-        return Expression(BinaryOperator("/", self._root.copy(), right).simplify())
+        return Expression(BinaryOperator("/", self._root, right))
 
     def __rtruediv__(self, other: Any) -> "Expression":
         """Right division operator overload."""
         left = _ensure_node(other)
-        return Expression(BinaryOperator("/", left, self._root.copy()).simplify())
+        return Expression(BinaryOperator("/", left, self._root))
 
     def __pow__(self, other: Any) -> "Expression":
         """Power operator overload."""
         right = _ensure_node(other)
-        return Expression(BinaryOperator("^", self._root.copy(), right).simplify())
+        return Expression(BinaryOperator("^", self._root, right))
 
     def __rpow__(self, other: Any) -> "Expression":
         """Right power operator overload."""
         left = _ensure_node(other)
-        return Expression(BinaryOperator("^", left, self._root.copy()).simplify())
+        return Expression(BinaryOperator("^", left, self._root))
 
     def __neg__(self) -> "Expression":
         """Negation operator overload."""
-        return Expression(UnaryOperator("-", self._root.copy()).simplify())
+        return Expression(UnaryOperator("-", self._root))
 
 
 def _ensure_node(value: Any) -> Node:
@@ -236,50 +236,50 @@ def _diff_unary_operator(node: UnaryOperator, variable: str) -> Node:
 
 def _diff_sin(operand: Node, operand_derivative: Node) -> Node:
     """Derivative of sin(u): cos(u) * u'."""
-    return BinaryOperator("*", UnaryOperator("cos", operand.copy()), operand_derivative)
+    return BinaryOperator("*", UnaryOperator("cos", operand), operand_derivative)
 
 
 def _diff_cos(operand: Node, operand_derivative: Node) -> Node:
     """Derivative of cos(u): -sin(u) * u'."""
-    return BinaryOperator("*", UnaryOperator("-", UnaryOperator("sin", operand.copy())), operand_derivative)
+    return BinaryOperator("*", UnaryOperator("-", UnaryOperator("sin", operand)), operand_derivative)
 
 
 def _diff_tan(operand: Node, operand_derivative: Node) -> Node:
     """Derivative of tan(u): (1/cos²(u)) * u'."""
-    cos_operand = UnaryOperator("cos", operand.copy())
-    denominator = BinaryOperator("*", cos_operand.copy(), cos_operand.copy())
+    cos_operand = UnaryOperator("cos", operand)
+    denominator = BinaryOperator("*", cos_operand, cos_operand)
     return BinaryOperator("*", BinaryOperator("/", Literal(1), denominator), operand_derivative)
 
 
 def _diff_cot(operand: Node, operand_derivative: Node) -> Node:
     """Derivative of cot(u): (-1/sin²(u)) * u'."""
-    sin_operand = UnaryOperator("sin", operand.copy())
-    denominator = BinaryOperator("*", sin_operand.copy(), sin_operand.copy())
+    sin_operand = UnaryOperator("sin", operand)
+    denominator = BinaryOperator("*", sin_operand, sin_operand)
     neg_one = UnaryOperator("-", Literal(1))
     neg_derivative = BinaryOperator("*", neg_one, operand_derivative)
-    return BinaryOperator("/", neg_derivative, denominator).simplify()
+    return BinaryOperator("/", neg_derivative, denominator)
 
 
 def _diff_exp(operand: Node, operand_derivative: Node) -> Node:
     """Derivative of exp(u): exp(u) * u'."""
-    return BinaryOperator("*", UnaryOperator("exp", operand.copy()), operand_derivative)
+    return BinaryOperator("*", UnaryOperator("exp", operand), operand_derivative)
 
 
 def _diff_ln(operand: Node, operand_derivative: Node) -> Node:
     """Derivative of ln(u): (1/u) * u'."""
-    return BinaryOperator("/", operand_derivative, operand.copy())
+    return BinaryOperator("/", operand_derivative, operand)
 
 
 def _diff_log(operand: Node, operand_derivative: Node) -> Node:
     """Derivative of log₁₀(u): (1/(u*ln(10))) * u'."""
     ln_10 = Literal(math.log(10))
-    denominator = BinaryOperator("*", operand.copy(), ln_10)
+    denominator = BinaryOperator("*", operand, ln_10)
     return BinaryOperator("*", BinaryOperator("/", Literal(1), denominator), operand_derivative)
 
 
 def _diff_sqrt(operand: Node, operand_derivative: Node) -> Node:
     """Derivative of sqrt(u): (1/(2*sqrt(u))) * u'."""
-    denominator = BinaryOperator("*", Literal(2), UnaryOperator("sqrt", operand.copy()))
+    denominator = BinaryOperator("*", Literal(2), UnaryOperator("sqrt", operand))
     return BinaryOperator("*", operand_derivative, BinaryOperator("/", Literal(1), denominator))
 
 
@@ -307,19 +307,18 @@ def _diff_binary_operator(node: BinaryOperator, variable: str) -> Node:
 
 def _diff_product(left: Node, right: Node, left_derivative: Node, right_derivative: Node) -> Node:
     """Product rule: (uv)' = u'v + uv'."""
-    term1 = BinaryOperator("*", left_derivative, right.copy())
-    term2 = BinaryOperator("*", left.copy(), right_derivative)
+    term1 = BinaryOperator("*", left_derivative, right)
+    term2 = BinaryOperator("*", left, right_derivative)
     return BinaryOperator("+", term1, term2)
 
 
 def _diff_quotient(left: Node, right: Node, left_derivative: Node, right_derivative: Node) -> Node:
     """Quotient rule: (u/v)' = (u'v - uv')/v²."""
-    numerator_term1 = BinaryOperator("*", left_derivative, right.copy())
-    numerator_term2 = BinaryOperator("*", left.copy(), right_derivative)
+    numerator_term1 = BinaryOperator("*", left_derivative, right)
+    numerator_term2 = BinaryOperator("*", left, right_derivative)
     numerator = BinaryOperator("-", numerator_term1, numerator_term2)
-    numerator_simplified = numerator.simplify()
-    denominator = BinaryOperator("*", right.copy(), right.copy())
-    return BinaryOperator("/", numerator_simplified, denominator)
+    denominator = BinaryOperator("*", right, right)
+    return BinaryOperator("/", numerator, denominator)
 
 
 def _diff_power(base: Node, exponent: Node, base_derivative: Node, exponent_derivative: Node) -> Node:
@@ -334,14 +333,14 @@ def _diff_power_constant_exponent(base: Node, exponent: Literal, base_derivative
     n = exponent.value
     coefficient = Literal(n)
     new_exponent = Literal(n - 1)
-    power_term = BinaryOperator("^", base.copy(), new_exponent)
+    power_term = BinaryOperator("^", base, new_exponent)
     return BinaryOperator("*", BinaryOperator("*", coefficient, power_term), base_derivative)
 
 
 def _diff_power_general(base: Node, exponent: Node, base_derivative: Node, exponent_derivative: Node) -> Node:
     """General power rule: (u^v)' = u^v * (v'*ln(u) + v*u'/u)."""
-    part1 = BinaryOperator("*", exponent_derivative, UnaryOperator("ln", base.copy()))
-    part2 = BinaryOperator("*", exponent.copy(), BinaryOperator("/", base_derivative, base.copy()))
+    part1 = BinaryOperator("*", exponent_derivative, UnaryOperator("ln", base))
+    part2 = BinaryOperator("*", exponent, BinaryOperator("/", base_derivative, base))
     inner_sum = BinaryOperator("+", part1, part2)
-    power_term = BinaryOperator("^", base.copy(), exponent.copy())
+    power_term = BinaryOperator("^", base, exponent)
     return BinaryOperator("*", power_term, inner_sum)

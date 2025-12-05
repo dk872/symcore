@@ -2,37 +2,47 @@ from __future__ import annotations
 from typing import Dict, Union
 from .Node import Node
 
-# Type alias for clarity in method signatures
+# Type alias for numeric values
 Number = Union[int, float]
+EPSILON = 1e-10
 
 
 class Literal(Node):
-    """Represents a constant numerical value (e.g., 5, 3.14, 0)."""
+    """Represents a constant numeric value in the AST."""
 
     def __init__(self, value: Number):
-        """Initializes the literal node with a numerical value."""
-        # Ensure boolean values are treated as integers (True=1, False=0).
-        if isinstance(value, bool):
-            value = int(value)
-        self.value = value
+        """Initializes the literal node with a numeric value."""
+        # Ensure value is float for consistent handling, unless it's a "clean" integer
+        if abs(value - round(value)) < EPSILON:
+            self.value: Number = int(round(value))
+        else:
+            self.value: Number = float(value)
 
     def __repr__(self) -> str:
         """Returns a string representation for debugging (e.g., Literal(5))."""
         return f"Literal({self.value})"
 
     def to_string(self, parent_prec: int = 0, position: str = "") -> str:
-        """Renders the numerical value to a string, formatting floats as integers if possible."""
-        # Check if the float value is mathematically equivalent to an integer.
-        if isinstance(self.value, float) and self.value.is_integer():
-            return str(int(self.value))
-        return str(self.value)
+        """Renders the literal value to a string."""
+        if self._string_cache is not None:
+            return self._string_cache
+
+        # Compute and store
+        if isinstance(self.value, int):
+            result = str(self.value)
+        else:
+            # Handle float values, ensuring clean representation
+            result = str(self.value)
+
+        self._string_cache = result
+        return result
 
     def simplify(self) -> "Node":
-        """Simplification of a literal returns itself as it cannot be simplified further."""
+        """Simplification of a literal returns itself."""
         return self
 
     def substitute(self, values: Dict[str, "Node"]) -> "Node":
-        """Substitution on a literal returns itself as it has no variables to replace."""
+        """Substitution on a literal returns itself."""
         return self
 
     def precedence(self) -> int:

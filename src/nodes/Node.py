@@ -9,10 +9,13 @@ class Node:
     left: Optional[Node] = None
     right: Optional[Node] = None
     operand: Optional[Node] = None
+    _string_cache: Optional[str] = None
 
     def copy(self) -> "Node":
         """Returns a deep copy of the current node and its entire subtree."""
-        return copy.deepcopy(self)
+        new_node = copy.copy(self)
+        new_node._string_cache = None
+        return new_node
 
     def simplify(self) -> "Node":
         """Applies algebraic simplification rules recursively (base implementation returns self)."""

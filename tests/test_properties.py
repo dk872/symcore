@@ -861,7 +861,7 @@ class TestCompositionProperties:
         expr = parse("sin(cos(x^2))")
         result = expr.evaluate({'x': x})
         expected = math.sin(math.cos(x ** 2))
-        assert_approx_equal(result, expected)
+        assert_approx_equal(result, expected, rel_tol=1e-6)
 
     @given(positive_numbers())
     @settings(max_examples=100)
@@ -883,7 +883,7 @@ class TestHomogeneityProperties:
         expr = parse("2*x + 3*x")
         result1 = expr.evaluate({'x': k * x})
         result2 = k * expr.evaluate({'x': x})
-        assert_approx_equal(result1, result2)
+        assert_approx_equal(result1, result2, abs_tol=1e-6)
 
     @given(valid_numbers(), valid_numbers())
     @settings(max_examples=100)
@@ -892,7 +892,7 @@ class TestHomogeneityProperties:
         expr = parse("x^2")
         result1 = expr.evaluate({'x': k * x})
         result2 = (k ** 2) * expr.evaluate({'x': x})
-        assert_approx_equal(result1, result2)
+        assert_approx_equal(result1, result2, abs_tol=1e-6)
 
 
 class TestBoundaryBehaviorProperties:

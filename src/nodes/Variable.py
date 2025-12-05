@@ -16,7 +16,13 @@ class Variable(Node):
 
     def to_string(self, parent_prec: int = 0, position: str = "") -> str:
         """Renders the variable name to a string."""
-        return self.name
+        if self._string_cache is not None:
+            return self._string_cache
+
+        # Compute and store
+        result = self.name
+        self._string_cache = result
+        return result
 
     def simplify(self) -> "Node":
         """Simplification of a variable returns itself."""
