@@ -33,10 +33,6 @@ class Lexer:
         token_list.append(Token(Token.EOF, None))
         return token_list
 
-    def peek(self) -> Token:
-        """Returns the current token without advancing the position."""
-        return self.tokens[self.pos]
-
     def next(self) -> Token:
         """Returns the current token and advances the position to the next token."""
         current_token = self.tokens[self.pos]
