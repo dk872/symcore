@@ -19,7 +19,7 @@ def parse(expr_str: str) -> "Expression":
 class Expression:
     """Represents a mathematical expression with parsing, evaluation, and symbolic manipulation capabilities."""
 
-    __slots__ = ("_root",)
+    __slots__ = "_root"
 
     def __init__(self, root: Node):
         """Initialize expression with an AST root node."""
